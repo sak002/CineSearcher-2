@@ -1,3 +1,4 @@
+import "antd/dist/antd.css";
 import MovieList from "components/MovieList";
 
 import "./App.css";
