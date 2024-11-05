@@ -1,1 +1,1 @@
-# SCineSearcher
+# CineSearcher

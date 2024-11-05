@@ -6,7 +6,7 @@ import { Typography } from "neetoui";
 const MovieItem = props => (
   <div className="bg-gray-250 container border-2 border-blue-700 shadow-lg">
     <Image
-      alt="Movie poster"
+      alt={props.Title}
       className="mx-auto mt-1 h-60 w-40 border-2 border-blue-700"
       src={props.Poster}
     />

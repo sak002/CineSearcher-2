@@ -7,17 +7,18 @@ import { isEmpty } from "ramda";
 
 import MovieItem from "./MovieItem";
 import PageLoader from "./PageLoader";
+import Pagination from "./Pagination";
 import useDebounce from "./useDebounce";
 
 const MovieList = () => {
   const [data, setData] = useState([]);
-  // const [totalMovieCount, setTotalMovieCount] = useState(0);
+  const [totalMovieCount, setTotalMovieCount] = useState(0);
   const [searchKey, setSearchKey] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const debouncedSearchKey = useDebounce(searchKey);
-  // const DEFAULT_PAGE_SIZE = 8;
+  const DEFAULT_PAGE_SIZE = 10;
   // const DEFAULT_PAGE_INDEX = 1;
-  // const [currentPage, setCurrentPage] = useState(DEFAULT_PAGE_INDEX);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const fetchMovies = async () => {
     setIsLoading(true);
@@ -26,11 +27,11 @@ const MovieList = () => {
       console.log("Data fetch started.");
       if (debouncedSearchKey === "") {
         response = await axios.get(
-          `http://www.omdbapi.com/?s=spider&apikey=eb23a269`
+          `http://www.omdbapi.com/?s=spider&apikey=eb23a269&page=${currentPage}`
         );
       } else {
         response = await axios.get(
-          `http://www.omdbapi.com/?s=${debouncedSearchKey}&apikey=eb23a269`
+          `http://www.omdbapi.com/?s=${debouncedSearchKey}&apikey=eb23a269&page=${currentPage}`
         );
       }
 
@@ -46,10 +47,10 @@ const MovieList = () => {
 
     if (response.data.totalResults && response.data.Search) {
       setData(response.data.Search);
-      // setTotalMovieCount(Number(response.data.totalResults));
+      setTotalMovieCount(Number(response.data.totalResults));
     } else {
       setData([]);
-      // setTotalMovieCount(0);
+      setTotalMovieCount(0);
     }
 
     return;
@@ -58,7 +59,7 @@ const MovieList = () => {
   useEffect(() => {
     fetchMovies();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedSearchKey]);
+  }, [debouncedSearchKey, currentPage]);
 
   if (isLoading) {
     return <PageLoader />;
@@ -82,13 +83,20 @@ const MovieList = () => {
       {isEmpty(data) ? (
         <NoData className="h-full w-full" title="No products to show" />
       ) : (
-        <div className="mx-20 grid grid-cols-2 gap-x-24 gap-y-8 p-4 md:grid-cols-3 lg:grid-cols-4">
+        <div className="mx-20 grid grid-cols-2 gap-x-24 gap-y-8 p-4 md:grid-cols-2 lg:grid-cols-5">
           {/* justify-items-center */}
           {data.map(movie => (
             <MovieItem key={movie.imdbID} {...movie} />
           ))}
         </div>
       )}
+      <div>
+        <Pagination
+          countsPerPage={DEFAULT_PAGE_SIZE}
+          setCurrentPage={setCurrentPage}
+          totalCount={totalMovieCount}
+        />
+      </div>
     </div>
   );
 };
