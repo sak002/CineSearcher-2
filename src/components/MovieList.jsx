@@ -21,7 +21,11 @@ const MovieList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedMovie, setSelectedMovie] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [history, setHistory] = useState([]);
+  const [history, setHistory] = useState(
+    localStorage.getItem("history")
+      ? JSON.parse(localStorage.getItem("history"))
+      : []
+  );
 
   const fetchMovies = async () => {
     setIsLoading(true);
@@ -76,12 +80,8 @@ const MovieList = () => {
   };
 
   useEffect(() => {
-    console.log("Modal visibility:", isModalVisible);
-  }, [isModalVisible]);
-
-  useEffect(() => {
-    console.log("Selected movie:", selectedMovie);
-  }, [selectedMovie]);
+    localStorage.setItem("history", JSON.stringify(history));
+  }, [history]);
 
   if (isLoading) {
     return <PageLoader />;
